@@ -1,0 +1,19 @@
+name: Demo Workflow
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to the branch you want to trigger the workflow on
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # You can choose the operating system that suits your needs
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2  # This action checks out your repository
+
+    - name: Clone Another Repository
+      run:  git ls-remote https://ay2raefwtlizsdl7yfjhqiwjeoy6srneqvuk7swa2btksxxrkvtq@rudra099999@dev.azure.com/rudra099999/Project%20A/_git/TestA  # Replace with the URL of the repository you want to clone
+
+    # Add more steps as needed for your workflow
