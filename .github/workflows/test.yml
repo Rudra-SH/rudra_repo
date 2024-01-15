@@ -15,7 +15,7 @@ jobs:
 
     - name: Clone Another Repository
       run: |
-        git clone https://rudra099999:utfr2peqxzxbj7cnf25wn4xrqf3jzkfvujqiitg2kwc7evwntrbq@dev.azure.com/rudra099999/Project%20A/_git/TestA # Replace with the URL of the repository you want to clone
+        git clone https://rudra099999:6fjxnckwyd2ktowgjpdblvm5tufwpwaxsc4saswk6rpjjqzte6la@dev.azure.com/rudra099999/Project%20A/_git/TestA # Replace with the URL of the repository you want to clone
         cd TestA
         ll
 
