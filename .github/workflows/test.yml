@@ -13,7 +13,7 @@ jobs:
         run: echo "This is a normal step"
 
       - name: Step 2
-        #run: echo "This step has a warning"
+        run: echo "This step has a warning"
         continue-on-error: true
         if: always()
         # Adding a warning annotation
@@ -22,7 +22,7 @@ jobs:
           title: "Warning"
 
       - name: Step 3
-        #run: echo "This step has an error"
+        run: echo "This step has an error"
         continue-on-error: false
         # Adding an error annotation
         with:
