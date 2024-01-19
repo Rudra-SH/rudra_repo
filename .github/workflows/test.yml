@@ -24,7 +24,7 @@ jobs:
       - name: Step 3 with error
         run: |
           echo "::error file=example.txt::This is an error message"
-          exit 1  # This step will result in an error
+          #exit 1  # This step will result in an error
 
       - name: Step 4 after error
         run: echo "This step won't run if the previous step has an error"
