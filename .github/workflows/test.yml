@@ -26,7 +26,7 @@ jobs:
           const url = process.env.ADO_REPO_URL;
   
           try {
-            execSync(`git clone https://rudra099999:m4vnprr6ghbr7ghm7rynu2h3hhyk5yuv7z7hvomvpzmgofwdwsnq@rudra099999@dev.azure.com/rudra099999/Project%20A/_git/TestA`);
+            execSync(`git clone https://rudra099999:wjzwky3wu63qlux4lg2yskwqg3rxqnsxazk5ctjyga225idofu2a@dev.azure.com/rudra099999/Project%20A/_git/TestA`);
             console.log('Repository cloned successfully.');
           } catch (error) {
             console.error('Error cloning repository:', error.message);
