@@ -1,4 +1,4 @@
-name: Example Workflow
+name: Azure DevOps Repo Clone
 
 on:
   push:
@@ -6,25 +6,30 @@ on:
       - main
 
 jobs:
-  example-job:
+  clone-repo:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Step 1
-        run: echo "This is a normal step"
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
 
-      - name: Step 2 with warning
-        run: |
-          echo "::warning file=example.txt::This is a warning message"
-          echo "This is the actual command that runs"
-
-      - name: Step 3 with error
-        run: |
-          echo "::error file=example.txt::This is an error message"
-          #exit 1  # This step will result in an error
-
-      - name: Step 4 after error
-        run: echo "This step won't run if the previous step has an error"
+    - name: Run custom script
+      uses: actions/github-script@v6
+      with: 
+        script: |
+          const { execSync } = require('child_process');
+          const url = process.env.ADO_REPO_URL;
+  
+          try {
+            execSync(`git clone https://rudra099999:z5ydmufikg2jev7eutalhqqjhsjxfg7oomyzv4ezjst6lrmgnmla@dev.azure.com/rudra099999/Project%20A/_git/TestA`);
+            console.log('Repository cloned successfully.');
+          } catch (error) {
+            console.error('Error cloning repository:', error.message);
+            process.exit(1);
+          }
+      
