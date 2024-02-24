@@ -28,7 +28,7 @@ jobs:
         echo "Step 2 Input"
         echo ${{ inputs.step1 }}
         echo "::error::error in step 2"
-        exxit 1
+        exit 1
 
     - name: Step 3
       run: |
