@@ -1,0 +1,34 @@
+name: Test triggering
+on:
+  workflow_dispatch:
+    inputs:
+      step1:
+        description: 'Step1 Input'
+        required: true
+      step2:
+        description: 'Step2 Input'
+        required: true
+      step3:
+        description: 'Step1 Input'
+        required: true
+        
+
+jobs:
+  test-triggerring:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Step 1
+      run: |
+        echo "Step 1 Input"
+        echo ${{ inputs.step1 }}
+
+    - name: Step 2
+      run: |
+        echo "Step 2 Input"
+        echo ${{ inputs.step1 }}
+
+    - name: Step 3
+      run: |
+        echo "Step 3 Input"
+        echo ${{ inputs.step1 }}
