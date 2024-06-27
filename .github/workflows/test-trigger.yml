@@ -17,9 +17,18 @@ jobs:
   test-triggerring:
     runs-on: ubuntu-latest
     steps:
+
+    - name: Check for Teams Webhook URL
+      id: check_teams_webhook
+      run: |
+        if [ -z "${{ secrets.TEAMS_WEBHOOK_URL }}" ]; then
+          echo "::set-output name=has_webhook::false"
+        else
+          echo "::set-output name=has_webhook::true"
+        fi
     
     - name: Step 1
-      if: ${{ secrets.MYSECRET }} == ''
+      if: steps.check_teams_webhook.outputs.has_webhook == 'true'
       run: |
         echo "Step 1 Input"
         echo ${{ inputs.step1 }}
@@ -29,7 +38,6 @@ jobs:
         echo "Step 2 Input"
         echo ${{ inputs.step1 }}
         echo "::error::error in step 2"
-        exit 1
 
     - name: Step 3
       run: |
