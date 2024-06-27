@@ -19,7 +19,7 @@ jobs:
     steps:
     
     - name: Step 1
-      if: secrets.MYSECRET
+      if: ${{ secrets.MYSECRET }} == ''
       run: |
         echo "Step 1 Input"
         echo ${{ inputs.step1 }}
