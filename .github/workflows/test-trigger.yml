@@ -21,7 +21,7 @@ jobs:
     - name: Check for Teams Webhook URL
       id: check_teams_webhook
       run: |
-        if [ -z "${{ secrets.TEAMS_WEBHOOK_URL }}" ]; then
+        if [ -z "${{ secrets.MY_SECRET }}" ]; then
           echo "::set-output name=has_webhook::false"
         else
           echo "::set-output name=has_webhook::true"
