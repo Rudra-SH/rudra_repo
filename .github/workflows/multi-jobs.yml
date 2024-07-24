@@ -52,3 +52,4 @@ jobs:
         run: |
           echo "BRANCH_REF is ${{ needs.job1.outputs.branch_ref }}"
           echo "BRANCH_SHA is ${{ needs.job1.outputs.branch_sha }}"
+          echo "${VAR1}"
