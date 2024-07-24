@@ -1,6 +1,8 @@
 name: Job Output Example with env
 
 on: [push]
+env:
+  VAR1: This is var 1
 
 jobs:
   job1:
@@ -34,7 +36,8 @@ jobs:
             const branch_sha = process.env.BRANCH_SHA;
             console.log(branch_ref);
             console.log(branch_sha);
-
+            console.log(process.env.VAR1);
+            
             core.setOutput('BRANCH_REF', branch_ref);
             core.setOutput('BRANCH_SHA', branch_sha);
 
