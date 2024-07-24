@@ -5,17 +5,30 @@ on: [push]
 jobs:
   job1:
     runs-on: ubuntu-latest
-    env:
-      MY_VAR: value_from_job1
     outputs:
       my_var: ${{ steps.set-output.outputs.my_var }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: set-env
+        id: set-env
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch_ref = `${{ github.ref_name }}`;
+            const branch_sha = `${{ github.sha }}`;
+            console.log(branch_ref);
+            console.log(branch_sha);
+
+            core.exportVariable('BRANCH_REF', branch_ref);
+            core.exportVariable('BRANCH_SHA', branch_sha);
+
       - name: Set output
         id: set-output
-        run: echo "::set-output name=my_var::$MY_VAR"
+        run: |
+          echo "::set-output name=branch_ref::$BRANCH_REF"
+          echo "::set-output name=branch_sha::$BRANCH_SHA"
 
   job2:
     runs-on: ubuntu-latest
