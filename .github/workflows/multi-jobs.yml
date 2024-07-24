@@ -2,8 +2,8 @@ name: Job Output Example with env
 
 on: [push]
 env:
-  BRANCH_SHA: ${{ github.ref_name }}
-  BRANCH_REF: ${{ github.sha }}
+  BRANCH_SHA: ${{ github.sha }}
+  BRANCH_REF: ${{ github.ref_name }}
 
 jobs:
   job1:
