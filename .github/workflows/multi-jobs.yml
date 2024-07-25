@@ -46,6 +46,9 @@ jobs:
             console.log(branch_ref);
             console.log(branch_sha);
 
+            console.log(typeof(branch_ref));
+            console.log(typeof(branch_sha));
+
             const input1 = `${{ inputs.input-1 }}`;
             const input2 = `${{ inputs.input-2 }}`;
             console.log(input1);
