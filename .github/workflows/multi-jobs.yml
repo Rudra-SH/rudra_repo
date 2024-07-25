@@ -51,6 +51,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Dummmy step
+        run: |
+          #echo "BRANCH_REF is ${{ needs.job1.outputs.branch_ref }}"
+          #echo "BRANCH_SHA is ${{ needs.job1.outputs.branch_sha }}"
+          echo "${BRANCH_REF}";
+          echo "${BRANCH_SHA}";
+          echo "${STEP_ENV}";
+          echo "${JOB2_ENV}";
+
       - name: Use the job output
         env: 
           STEP_ENV: This is step env
