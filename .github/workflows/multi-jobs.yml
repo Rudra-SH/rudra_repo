@@ -1,6 +1,14 @@
 name: Job Output Example with env
 
-on: [push]
+on:
+  workflow_dispatch:
+    inputs: 
+      input-1:
+        type: string
+        required: true
+      input-2:
+        type: string
+        required: true
 env:
   BRANCH_SHA: ${{ github.sha }}
   BRANCH_REF: ${{ github.ref_name }}
@@ -37,6 +45,11 @@ jobs:
             const branch_sha = process.env.BRANCH_SHA;
             console.log(branch_ref);
             console.log(branch_sha);
+
+            const input1 = `${{ inputs.input-1 }}`;
+            const input2 = `${{ inputs.input-2 }}`;
+            console.log(input1);
+            console.log(input2);
             /*console.log(process.env.VAR1);
             
             core.setOutput('BRANCH_REF', branch_ref);
@@ -59,6 +72,15 @@ jobs:
           echo "${BRANCH_SHA}";
           echo "${STEP_ENV}";
           echo "${JOB2_ENV}";
+
+      - name: Check inputs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const input1 = `${{ inputs.input-1 }}`;
+            const input2 = `${{ inputs.input-2 }}`;
+            console.log(input1);
+            console.log(input2);
 
       - name: Use the job output
         env: 
