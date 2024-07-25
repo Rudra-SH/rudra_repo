@@ -45,13 +45,19 @@ jobs:
   job2:
     runs-on: ubuntu-latest
     needs: job1
+    env: 
+      JOB2_ENV: This is job 2env
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Use the job output
+        env: 
+          STEP_ENV: This is step env
         run: |
           #echo "BRANCH_REF is ${{ needs.job1.outputs.branch_ref }}"
           #echo "BRANCH_SHA is ${{ needs.job1.outputs.branch_sha }}"
           echo "${BRANCH_REF}";
           echo "${BRANCH_SHA}";
+          echo "${STEP_ENV}";
+          echo "${JOB2_ENV}";
