@@ -21,7 +21,9 @@ jobs:
       branch_sha: ${{ steps.set-output.outputs.BRANCH_SHA }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: process.env.BRANCH_SHA
 
       # - name: set-env
       #   id: set-env
