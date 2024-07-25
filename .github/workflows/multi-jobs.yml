@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: env.BRANCH_SHA
+          ref: ${{ env.BRANCH_SHA }}
 
       # - name: set-env
       #   id: set-env
