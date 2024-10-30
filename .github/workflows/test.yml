@@ -25,7 +25,7 @@ jobs:
           let issue_app_type = 'Liberty';
 
           if(packageModule === 'Custom' || qualityCheckModule ==='Custom'){
-            console.log('valid'')
+            console.log('valid')
             return;
           }
           
