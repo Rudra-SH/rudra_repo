@@ -20,14 +20,20 @@ jobs:
       uses: actions/github-script@v6
       with: 
         script: |
-          const { execSync } = require('child_process');
-          const url = process.env.ADO_REPO_URL;
-  
-          try {
-            execSync(`git clone https://rudra099999:wjzwky3wu63qlux4lg2yskwqg3rxqnsxazk5ctjyga225idofu2a@dev.azure.com/rudra099999/Project%20A/_git/TestA`);
-            console.log('Repository cloned successfully.');
-          } catch (error) {
-            console.error('Error cloning repository:', error.message);
-            process.exit(1);
+          let packageModule = 'Custom';
+          let qualityCheckModule = 'Custom';
+          let issue_app_type = 'Liberty';
+
+          if(packageModule === 'Custom' || qualityCheckModule ==='Custom'){
+            console.log('valid'')
+            return;
+          }
+          
+          if (['Websphere', 'Liberty', 'Mulesoft', 'ZOS'].includes(issue_app_type)){
+              if((packageModule === 'maven' && (qualityCheckModule === 'maven' || qualityCheckModule === 'sonar')) || (packageModule === 'Custom' && qualityCheckModule === 'Custom')){
+                  console.log('Valid');
+              } else{
+                  console.log(`invalid`);
+              }
           }
       
