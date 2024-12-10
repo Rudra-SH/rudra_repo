@@ -1,0 +1,51 @@
+name: List Repository Commits
+
+on:
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  list_commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install @octokit/rest
+
+      - name: Fetch Commits
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Automatically provided by GitHub
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { Octokit } = require("@octokit/rest");
+  
+            const octokit = new Octokit({
+              auth: process.env.GITHUB_TOKEN,
+            });
+  
+            async function listCommits() {
+              const owner = process.env.owner; // Replace with the owner of the repo
+              const repo = process.env.repo;   // Replace with the repo name
+
+              const response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
+                owner,
+                repo,
+                headers: {
+                  'X-GitHub-Api-Version': '2022-11-28'
+                }
+              });
+              return response.data;
+            }
+
+            const firstCommitResponse = await listCommmits();
+            console.log(firstCommitResponse);
+            let start = firstCommitResponse[0].sha
+            console.log(start);
