@@ -26,20 +26,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { Octokit } = require("@octokit/core");
-      
-            const octokit = new Octokit({
-              auth: process.env.GITHUB_TOKEN,
+            const firstCommitResponse = await github.rest.repos.listCommits({
+            	owner: 'Rudra-SH',
+            	repo: 'rudra_repo',
+            	sha: 'main',
+            	per_page: 1,
+            	page: 1,
+            	direction: 'asc' // Ensures commits are returned in chronological order
             });
-      
-            const response = await octokit.request('GET /repos/{owner}/{repo}/commits', {
-              owner: process.env.owner,
-              repo: process.env.repo,
-              headers: {
-                'X-GitHub-Api-Version': '2022-11-28'
-              }
-            });
-      
-            console.log(response.data); // Logs the entire list of commits
-            const firstCommit = response.data[0].sha;
-            console.log(`First commit SHA: ${firstCommit}`);
