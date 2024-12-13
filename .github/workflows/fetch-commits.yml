@@ -34,4 +34,4 @@ jobs:
             	page: 1,
             	direction: 'asc' // Ensures commits are returned in chronological order
             });
-            console.log(firstCommitResponse);
+            console.log(firstCommitResponse.data);
