@@ -32,6 +32,6 @@ jobs:
             	sha: 'main',
             	per_page: 1,
             	page: 1,
-            	direction: 'asc' // Ensures commits are returned in chronological order
+            	direction: 'desc' // Ensures commits are returned in chronological order
             });
             console.log(firstCommitResponse.data);
