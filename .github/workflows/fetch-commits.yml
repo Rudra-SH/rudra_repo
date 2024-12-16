@@ -32,8 +32,8 @@ jobs:
             
             while (true) {
                 const response = await github.rest.repos.listCommits({
-                    owner: 'Rudra-SH',
-                    repo: 'rudra_repo',
+                    owner: 'octocat',
+                    repo: 'linguist',
                     sha: 'main', // Replace with the default branch name if it's not 'main'
                     per_page: perPage,
                     page,
