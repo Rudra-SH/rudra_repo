@@ -24,13 +24,13 @@ jobs:
         with:
           script: |
             const artifact = require('@actions/artifact');
-            const coreLib = require('@actions/core'); // Renamed to avoid conflict
-            
+            const core = require('@actions/core'); // No conflict with other variables
+
             async function uploadArtifact() {
-                const artifactClient = new artifact();
+                const artifactClient = artifact.create(); // Singleton provided by the module
                 const artifactName = 'artifacts';
-                const files = ['artifact1.txt']; // List of file paths
-                const rootDirectory = './artifacts'; // Root directory of the files
+                const files = ['./artifacts/artifact1.txt']; // Correct path for the file
+                const rootDirectory = './artifacts'; // Directory containing the file
             
                 try {
                     const response = await artifactClient.uploadArtifact(
@@ -39,10 +39,10 @@ jobs:
                       rootDirectory,
                       { retentionDays: 30 }
                     );
-                    coreLib.info(`Artifact uploaded: ${response.artifactName}`);
+                    core.info(`Artifact uploaded: ${response.artifactName}`);
                 } catch (error) {
-                    coreLib.setFailed(`Failed to upload artifact: ${error.message}`);
+                    core.setFailed(`Failed to upload artifact: ${error.message}`);
                 }
             }
-            
+
             uploadArtifact();
