@@ -1,0 +1,48 @@
+name: List Repository Commits
+
+on:
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  list_commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install @actions/artifact
+
+      - name: Upload artifact to run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            import * as artifact from '@actions/artifact';
+            import * as core from '@actions/core';
+            
+            async function uploadArtifact() {
+                const artifactClient = artifact.create();
+                const artifactName = 'artifacts';
+                const files = ['artifact1.txt']; // List of file paths
+                const rootDirectory = './artifacts'; // Root directory of the files
+            
+                try {
+                    const response = await artifactClient.uploadArtifact(
+                      artifactName,
+                      files,
+                      rootDirectory,
+                      {  retentionDays: 30 }
+                    );
+                    core.info(`Artifact uploaded: ${response.artifactName}`);
+                } catch (error) {
+                    core.setFailed(`Failed to upload artifact: ${error.message}`);
+                }
+            }
+            
+            uploadArtifact();
