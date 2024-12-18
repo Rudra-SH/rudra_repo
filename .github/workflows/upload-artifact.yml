@@ -1,4 +1,4 @@
-name: List Repository Commits
+name: Upload Artifact
 
 on:
   workflow_dispatch: # Allows manual triggering
@@ -27,7 +27,7 @@ jobs:
             const coreLib = require('@actions/core'); // Renamed to avoid conflict
             
             async function uploadArtifact() {
-                const artifactClient = artifact.create();
+                const artifactClient = new artifact();
                 const artifactName = 'artifacts';
                 const files = ['artifact1.txt']; // List of file paths
                 const rootDirectory = './artifacts'; // Root directory of the files
