@@ -1,10 +1,10 @@
-name: Upload Artifact
+name: List Repository Commits
 
 on:
   workflow_dispatch: # Allows manual triggering
 
 jobs:
-  list_commits:
+  upload-artifact:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         with:
           script: |
             const artifact = require('@actions/artifact');
-            const core = require('@actions/core');
+            const coreLib = require('@actions/core'); // Renamed to avoid conflict
             
             async function uploadArtifact() {
                 const artifactClient = artifact.create();
@@ -39,9 +39,9 @@ jobs:
                       rootDirectory,
                       { retentionDays: 30 }
                     );
-                    core.info(`Artifact uploaded: ${response.artifactName}`);
+                    coreLib.info(`Artifact uploaded: ${response.artifactName}`);
                 } catch (error) {
-                    core.setFailed(`Failed to upload artifact: ${error.message}`);
+                    coreLib.setFailed(`Failed to upload artifact: ${error.message}`);
                 }
             }
             
