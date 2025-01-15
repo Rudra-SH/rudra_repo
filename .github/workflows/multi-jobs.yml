@@ -66,7 +66,7 @@ jobs:
           script: |
             const a = `${{ steps.set-output.outputs.input1 }}`;
             console.log(a);
-            const b = ${{ steps.set-output.outputs.inputww }}`;
+            const b = `${{ steps.set-output.outputs.inputww }}`;
             console.log(b)
 
   job2:
