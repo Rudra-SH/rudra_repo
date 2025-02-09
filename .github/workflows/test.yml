@@ -24,7 +24,13 @@ jobs:
           let qualityCheckModule = 'Custom';
           let issue_app_type = 'Liberty';
 
-          if(packageModule === 'Custom' || qualityCheckModule ==='Custom'){
+          let message = `This is a message`;
+          message += `/n - An extra line`;
+          console.log(message);
+
+          core.setFailed(message);
+
+          /*if(packageModule === 'Custom' || qualityCheckModule ==='Custom'){
             console.log('valid')
             return;
           }
@@ -35,5 +41,5 @@ jobs:
               } else{
                   console.log(`invalid`);
               }
-          }
+          }*/
       
