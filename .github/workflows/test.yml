@@ -25,7 +25,7 @@ jobs:
           let issue_app_type = 'Liberty';
 
           let message = `This is a message`;
-          message += `/n - An extra line`;
+          message += `\n - An extra line`;
           console.log(message);
 
           core.setFailed(message);
