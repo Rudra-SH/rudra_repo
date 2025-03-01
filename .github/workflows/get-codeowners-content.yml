@@ -36,6 +36,8 @@ jobs:
               .map(line => line.trim()) // Remove leading/trailing spaces
               .filter(line => line && !line.startsWith('#')); // Remove comments & empty lines
 
+            console.log('lines', lines);
+
             // Regex patterns for team members and individual users
             const teamRegex = /@([\w-]+)\/([\w-]+)/g; // Matches @org/team
             const userRegex = /@([\w-]+_enterpriseName)/g;
