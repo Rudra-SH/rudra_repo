@@ -1,7 +1,9 @@
 name: Get CODEOWNERS Content
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - getCodeOwnersContents
 
 jobs:
   get_codeowners:
