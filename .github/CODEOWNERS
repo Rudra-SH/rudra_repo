@@ -1,3 +1,8 @@
 # this is comment
-* @Rudra-SH_enterpriseName @orgName/repoName
+* @Rudra-SH_enterpriseName @orgName/teamName @orgName1/teamName1
+* @orgName2/teamName2
+* @Rudra_enterpriseName 
+* @orgName3/teamName3 @Rudra2_enterpriseName
+* @Rudra3_enterpriseName # this in inline comment
+* @orgName4/teamName4 # this is another inline comment
 #this is another comment
