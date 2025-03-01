@@ -31,23 +31,41 @@ jobs:
             // Read CODEOWNERS content
             const content = fs.readFileSync(codeownersPath, 'utf-8');
 
-            // Remove comments and extract team names
+            // Remove comments and extract relevant lines
             const lines = content.split('\n')
               .map(line => line.trim()) // Remove leading/trailing spaces
               .filter(line => line && !line.startsWith('#')); // Remove comments & empty lines
 
-            // Extract teams (pattern: @org/team)
-            const teamRegex = /@([\w-]+)\/([\w-]+)/g;
+            // Regex patterns for team members and individual users
+            const teamRegex = /@([\w-]+)\/([\w-]+)/g; // Matches @org/team
+            const userRegex = /@([\w-]+)/g;           // Matches @username
+
             let orgNames = [];
             let teamNames = [];
+            let codeOwners = []; // To store final list of owners
 
             for (const line of lines) {
-              let match;
-              while ((match = teamRegex.exec(line)) !== null) {
-                orgNames.push(match[1]);  // orgName
-                teamNames.push(match[2]); // teamName
+              let teamMatch;
+              let userMatch;
+
+              // Extract teams
+              while ((teamMatch = teamRegex.exec(line)) !== null) {
+                const org = teamMatch[1];  // orgName
+                const team = teamMatch[2]; // teamName
+                orgNames.push(org);
+                teamNames.push(team);
+              }
+
+              // Extract individual users (excluding team patterns)
+              while ((userMatch = userRegex.exec(line)) !== null) {
+                const user = userMatch[1];
+                // Avoid adding team names as individuals
+                if (!line.includes(`/${user}`)) {
+                  codeOwners.push(user);
+                }
               }
             }
 
             console.log("Org Names:", orgNames);
             console.log("Team Names:", teamNames);
+            console.log("Initial CodeOwners (only individuals):", codeOwners);
