@@ -38,7 +38,7 @@ jobs:
 
             // Regex patterns for team members and individual users
             const teamRegex = /@([\w-]+)\/([\w-]+)/g; // Matches @org/team
-            const userRegex = /@([\w-]+)/g;           // Matches @username
+            const userRegex = /(^|\s)@([\w-]+)(?!\/)/g;           // Matches @username
 
             let orgNames = [];
             let teamNames = [];
@@ -58,12 +58,10 @@ jobs:
 
               // Extract individual users (excluding team patterns)
               while ((userMatch = userRegex.exec(line)) !== null) {
-                const user = userMatch[1];
-                // Avoid adding team names as individuals
-                if (!line.includes(`/${user}`)) {
-                  codeOwners.push(user);
-                }
+                const user = userMatch[2]; // Capture only the username
+                codeOwners.push(user);
               }
+
             }
 
             console.log("Org Names:", orgNames);
