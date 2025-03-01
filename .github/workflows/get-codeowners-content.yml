@@ -1,0 +1,38 @@
+name: Get CodeOwners Content
+
+on:
+  push:
+    branches:
+      - getCodeOwnersContents
+
+jobs:
+  list_commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install @octokit/rest
+
+      - name: Get CodeOwnersContent
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const codeownersPath = path.join(process.env.GITHUB_WORKSPACE, '.github', 'CODEOWNERS');
+
+            if (fs.existsSync(codeownersPath)) {
+              const content = fs.readFileSync(codeownersPath, 'utf-8');
+              console.log("CODEOWNERS Content:\n" + content);
+            } else {
+              console.log("CODEOWNERS file not found.");
+            }
