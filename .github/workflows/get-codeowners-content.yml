@@ -29,22 +29,27 @@ jobs:
             }
 
             // Read CODEOWNERS content
-            const content = fs.readFileSync(codeownersPath, 'utf-8');
+            let content = fs.readFileSync(codeownersPath, 'utf-8');
 
-            // Remove comments and extract relevant lines
+            // 1️⃣ Remove everything after '#' (inline comments)
+            content = content.replace(/#.*$/gm, '').trim();
+
+            console.log('content', content);
+
+            // 2️⃣ Split into lines and remove empty ones
             const lines = content.split('\n')
-              .map(line => line.trim()) // Remove leading/trailing spaces
-              .filter(line => line && !line.startsWith('#')); // Remove comments & empty lines
+              .map(line => line.trim())
+              .filter(line => line.length > 0); // Remove empty lines
 
             console.log('lines', lines);
 
-            // Regex patterns for team members and individual users
-            const teamRegex = /@([\w-]+)\/([\w-]+)/g; // Matches @org/team
-            const userRegex = /@([\w-]+_enterpriseName)/g;
+            // 3️⃣ Regex patterns
+            const teamRegex = /@([\w-]+)\s*\/\s*([\w-]+)/g;  // @orgName/teamName (Handles spaces)
+            const userRegex = /@([\w-]+_enterpriseName)/g;   // @username_enterpriseName
 
-            let orgNames = [];
-            let teamNames = [];
-            let codeOwners = []; // To store final list of owners
+            let orgNames = new Set();
+            let teamNames = new Set();
+            let codeOwners = new Set();
 
             for (const line of lines) {
               let teamMatch;
@@ -52,18 +57,20 @@ jobs:
 
               // Extract teams
               while ((teamMatch = teamRegex.exec(line)) !== null) {
-                const org = teamMatch[1];  // orgName
-                const team = teamMatch[2]; // teamName
-                orgNames.push(org);
-                teamNames.push(team);
+                orgNames.add(teamMatch[1].trim());  // orgName
+                teamNames.add(teamMatch[2].trim()); // teamName
               }
 
-              // Extract individual users (excluding team patterns)
+              // Extract individual users (excluding teams)
               while ((userMatch = userRegex.exec(line)) !== null) {
-                const user = userMatch[1]; // Extract the full username with _enterpriseName
-                codeOwners.push(user);
+                codeOwners.add(userMatch[1].trim());
               }
             }
+
+            // Convert Sets to Arrays
+            orgNames = [...orgNames];
+            teamNames = [...teamNames];
+            codeOwners = [...codeOwners];
 
             console.log("Org Names:", orgNames);
             console.log("Team Names:", teamNames);
