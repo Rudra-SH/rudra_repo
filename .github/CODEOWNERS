@@ -1,6 +1,6 @@
 # Sample CODEOWNERS file with edge cases
 * @Rudra-SH_enterpriseName @orgName/teamName  @orgName1/teamName1
-*.txt @orgName2 / teamName2    # Space around '/'
+@orgName2 / teamName2    # Space around '/'
 * @Rudra_enterpriseName 
 * @org-name-with-dash/team_name-123   # Special characters
 * @orgName3/teamName3 @Rudra2_enterpriseName
