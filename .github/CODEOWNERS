@@ -6,7 +6,7 @@
 * @orgName3/teamName3 @Rudra2_enterpriseName
 * @Rudra3_enterpriseName # @shouldNotBeCaptured in comment
 */scripts/ @orgName4/teamName4
-* @orgName5/teamName5 @orgName5/teamName5  # Duplicate team
+* @orgName5/teamName5 @orgName5/team Name 5  # Duplicate team
 * @UniqueUser_enterpriseName  # Duplicate username test
 * @UniqueUser_enterpriseName  # Should appear only once
 * @orgName6/team_Name6 @Rudra4_enterpriseName
