@@ -1,1 +1,12 @@
-* @Rudra-SH
+# Sample CODEOWNERS file with edge cases
+* @Rudra-SH_enterpriseName @orgName/teamName  @orgName1/teamName1
+@orgName2 / teamName2    # Space around '/'
+* @Rudra_enterpriseName 
+* @org-name-with-dash/team_name-123   # Special characters
+* @orgName3/teamName3 @Rudra2_enterpriseName
+* @Rudra3_enterpriseName # @shouldNotBeCaptured in comment
+*/scripts/ @orgName4/teamName4
+* @orgName5/teamName5 @orgName5/team Name 5  # Duplicate team
+* @UniqueUser_enterpriseName  # Duplicate username test
+* @UniqueUser_enterpriseName  # Should appear only once
+* @orgName6/team_Name6 @Rudra4_enterpriseName
