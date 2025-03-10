@@ -21,7 +21,7 @@ jobs:
               const response = await github.rest.repos.getContent({
                 owner: 'Rudra-SH',
                 repo: 'rudra_repo',
-                path: '.github/CODEOWNERS'
+                path: '.github/CODEOWNER'
               });
   
               const codeowners_response = response.data;
@@ -58,3 +58,4 @@ jobs:
               console.error("Error fetching CODEOWNERS file:", error.message);
             }
             // Test #1
+            console.log('This should print');
