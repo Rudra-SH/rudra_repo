@@ -31,6 +31,7 @@ jobs:
 
             const codeowners_contents = atob(codeowners_base64_content.replace(/[^A-Za-z0-9_=-]/g, ''));
             const lines = codeowners_contents.split('\n');
+            console.log(lines);
 
             const patterns = [];
             const teams = [];
