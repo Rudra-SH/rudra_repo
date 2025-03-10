@@ -17,61 +17,36 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const path = require('path');
+            const octokit = new Octokit({
+              auth: '${{ secrets.MY_ACCESS_TOKEN }}'
+            })
+            
+            const response = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+              owner: 'Rudra-SH',
+              repo: 'rudra_repo',
+              path: '.github/CODEOWNERS'
+            })
 
-            // Define CODEOWNERS path
-            const codeownersPath = path.join(process.env.GITHUB_WORKSPACE, '.github', 'CODEOWNERS');
+            const codeowners_response = response.data;
+            console.log(codeowners_response);
 
-            if (!fs.existsSync(codeownersPath)) {
-              console.log("CODEOWNERS file not found.");
-              return;
-            }
+            const codeowners_base64_content = codeowners_response.content.trim();
 
-            // Read CODEOWNERS content
-            let content = fs.readFileSync(codeownersPath, 'utf-8');
+            const codeowners_contents = atob(codeowners_base64_content.replace(/[^A-Za-z0-9_=-]/g, ''));
+            const lines = codeowners_contents.split('\n');
 
-            // 1️⃣ Remove everything after '#' (inline comments)
-            content = content.replace(/#.*$/gm, '').trim();
+            const patterns = [];
+            const teams = [];
 
-            console.log('content', content);
-
-            // 2️⃣ Split into lines and remove empty ones
-            const lines = content.split('\n')
-              .map(line => line.trim())
-              .filter(line => line.length > 0); // Remove empty lines
-
-            console.log('lines', lines);
-
-            // 3️⃣ Regex patterns
-            const teamRegex = /@([\w-]+)\s*\/\s*([\w-]+)/g;  // @orgName/teamName (Handles spaces)
-            const userRegex = /@([\w-]+_enterpriseName)/g;   // @username_enterpriseName
-
-            let orgNames = new Set();
-            let teamNames = new Set();
-            let codeOwners = new Set();
-
-            for (const line of lines) {
-              let teamMatch;
-              let userMatch;
-
-              // Extract teams
-              while ((teamMatch = teamRegex.exec(line)) !== null) {
-                orgNames.add(teamMatch[1].trim());  // orgName
-                teamNames.add(teamMatch[2].trim()); // teamName
+            lines.forEach(line => {
+              const parts = line.trim().split(' ');
+              if(parts.length > 1) {
+                patterns.push(parts[0]);
+                teams.push(...parts.slice(1));
               }
+            });
 
-              // Extract individual users (excluding teams)
-              while ((userMatch = userRegex.exec(line)) !== null) {
-                codeOwners.add(userMatch[1].trim());
-              }
-            }
+            console.log(patterns);
+            console.log(teams);
 
-            // Convert Sets to Arrays
-            orgNames = [...orgNames];
-            teamNames = [...teamNames];
-            codeOwners = [...codeOwners];
-
-            console.log("Org Names:", orgNames);
-            console.log("Team Names:", teamNames);
-            console.log("Initial CodeOwners (only individuals):", codeOwners);
+            
