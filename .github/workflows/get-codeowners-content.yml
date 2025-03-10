@@ -17,7 +17,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            
             const response = await github.rest.repos.getContent({
               owner: 'Rudra-SH',
               repo: 'rudra_repo',
@@ -25,28 +24,30 @@ jobs:
             });
 
             const codeowners_response = response.data;
-            console.log(codeowners_response);
-
-            const codeowners_base64_content = codeowners_response.content.trim();
-
+            const codeowners_base64_content = codeowners_response.content;
             const codeowners_contents = atob(codeowners_base64_content.replace(/[^A-Za-z0-9_=-]/g, ''));
-            const lines = codeowners_contents.split('\n');
-            console.log(lines);
 
-            const patterns = [];
-            const teams = [];
+            console.log("Raw CODEOWNERS Content:\n", codeowners_contents);
+
+            const patterns = new Set();
+            const teams = new Set();
+
+            const lines = codeowners_contents.split('\n');
 
             lines.forEach(line => {
-              const parts = line.trim().split(/\s+/);
-              if(parts.length > 1) {
-                patterns.push(parts[0]);
-                teams.push(...parts.slice(1));
+              // Remove comments (both inline and full-line comments)
+              const cleanedLine = line.split('#')[0].trim();
+
+              // Skip empty lines
+              if (!cleanedLine) return;
+
+              // Extract pattern and team names, handling multiple spaces
+              const parts = cleanedLine.split(/\s+/);
+              if (parts.length > 1) {
+                patterns.add(parts[0]); // Add pattern
+                parts.slice(1).forEach(team => teams.add(team)); // Add teams
               }
             });
 
-            console.log(patterns);
-            console.log(teams);
-
-            // Test 1
-
-            
+            console.log("Extracted Patterns:", Array.from(patterns));
+            console.log("Extracted Teams:", Array.from(teams));
