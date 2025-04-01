@@ -11,38 +11,44 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/upload-artifact@v4
         with:
-          node-version: '16'
+          name: myArtifact
+          path: artifacts
 
-      - name: Install Dependencies
-        run: npm install @actions/artifact
 
-      - name: Upload artifact to run
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const artifact = require('@actions/artifact');
-            const core = require('@actions/core'); // No conflict with other variables
+      # - name: Set up Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '16'
 
-            async function uploadArtifact() {
-                const artifactClient = artifact.create(); // Singleton provided by the module
-                const artifactName = 'artifacts';
-                const files = ['./artifacts/artifact1.txt']; // Correct path for the file
-                const rootDirectory = './artifacts'; // Directory containing the file
+      # - name: Install Dependencies
+      #   run: npm install @actions/artifact
+
+      # - name: Upload artifact to run
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const artifact = require('@actions/artifact');
+      #       const core = require('@actions/core'); // No conflict with other variables
+
+      #       async function uploadArtifact() {
+      #           const artifactClient = artifact.create(); // Singleton provided by the module
+      #           const artifactName = 'artifacts';
+      #           const files = ['./artifacts/artifact1.txt']; // Correct path for the file
+      #           const rootDirectory = './artifacts'; // Directory containing the file
             
-                try {
-                    const response = await artifactClient.uploadArtifact(
-                      artifactName,
-                      files,
-                      rootDirectory,
-                      { retentionDays: 30 }
-                    );
-                    core.info(`Artifact uploaded: ${response.artifactName}`);
-                } catch (error) {
-                    core.setFailed(`Failed to upload artifact: ${error.message}`);
-                }
-            }
+      #           try {
+      #               const response = await artifactClient.uploadArtifact(
+      #                 artifactName,
+      #                 files,
+      #                 rootDirectory,
+      #                 { retentionDays: 30 }
+      #               );
+      #               core.info(`Artifact uploaded: ${response.artifactName}`);
+      #           } catch (error) {
+      #               core.setFailed(`Failed to upload artifact: ${error.message}`);
+      #           }
+      #       }
 
-            uploadArtifact();
+      #       uploadArtifact();
