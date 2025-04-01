@@ -16,7 +16,7 @@ jobs:
           name: myArtifact
           path: |
             artifacts
-            artifacts2
+            file1.txt
 
 
       # - name: Set up Node.js
