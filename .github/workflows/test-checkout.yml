@@ -6,10 +6,11 @@ on:
       path:
         type: string
         default: ''
-        required: true
+        required: false
       fetch-depth:
         type: number
-        required: true
+        default: 1
+        required: false
 env:
   BRANCH_SHA: ${{ github.sha }}
   BRANCH_REF: ${{ github.ref_name }}
