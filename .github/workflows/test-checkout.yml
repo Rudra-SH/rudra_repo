@@ -1,0 +1,33 @@
+name: Testing repo checkout
+
+on:
+  workflow_dispatch:
+    inputs: 
+      path:
+        type: string
+        default: ''
+        required: false
+      fetch-depth:
+        type: string  # <-- safer as string
+        default: '1'
+        required: false
+
+env:
+  BRANCH_SHA: ${{ github.sha }}
+  BRANCH_REF: ${{ github.ref_name }}
+
+jobs:
+  test-checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+        with:
+          path: ${{ inputs.path }}
+          fetch-depth: ${{ inputs.fetch-depth }}
+
+      - name: testing step
+        run: |
+          pwd
+          ls -lah
+        shell: bash
