@@ -30,4 +30,7 @@ jobs:
         run: |
           pwd
           ls -lah
+          cd artifacts
+          pwd
+          ls -lah
         shell: bash
