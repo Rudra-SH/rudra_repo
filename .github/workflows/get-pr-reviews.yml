@@ -11,6 +11,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Octokit
+        run: npm install @octokit/core
+
       - name: Fetch PRs and their reviews
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -19,28 +27,29 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            node <<'EOF'
-            const fetch = require('node-fetch');
-  
+            const { Octokit } = require("@octokit/core");
+
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
             const owner = process.env.OWNER;
             const repo = process.env.REPO;
-            const token = process.env.GITHUB_TOKEN;
-            const limit = 5; // Concurrency limit
+            const limit = 5;
   
             async function fetchPullRequests() {
-              const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls`, {
-                headers: { Authorization: `Bearer ${token}` }
+              const { data } = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+                owner,
+                repo,
+                per_page: 100
               });
-              if (!res.ok) throw new Error(`Failed to fetch PRs: ${res.statusText}`);
-              return res.json();
+              return data;
             }
   
-            async function fetchReviews(pr) {
-              const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls/${pr.number}/reviews`, {
-                headers: { Authorization: `Bearer ${token}` }
+            async function fetchReviews(prNumber) {
+              const { data } = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
+                owner,
+                repo,
+                pull_number: prNumber
               });
-              if (!res.ok) throw new Error(`Failed to fetch reviews for PR #${pr.number}`);
-              return res.json();
+              return data;
             }
   
             async function runWithConcurrencyLimit(tasks, limit) {
@@ -70,21 +79,21 @@ jobs:
                 return;
               }
   
-              const tasks = pullRequests.map(pr => () => fetchReviews(pr));
+              const tasks = pullRequests.map(pr => () => fetchReviews(pr.number));
               const reviewsPerPR = await runWithConcurrencyLimit(tasks, limit);
   
               pullRequests.forEach((pr, i) => {
                 console.log(`\nPR #${pr.number} - ${pr.title}`);
-                if (reviewsPerPR[i].length === 0) {
+                const reviews = reviewsPerPR[i];
+                if (reviews.length === 0) {
                   console.log("  No reviews");
                 } else {
-                  reviewsPerPR[i].forEach(review => {
+                  reviews.forEach(review => {
                     console.log(`  ${review.user.login}: ${review.state}`);
                   });
                 }
               });
             })().catch(err => {
-              console.error("Workflow failed:", err);
+              console.error("Error:", err);
               process.exit(1);
             });
-            EOF
