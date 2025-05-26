@@ -17,7 +17,7 @@ jobs:
           node-version: 20
 
       - name: Install Octokit
-        run: npm install @octokit/core
+        run: npm install @octokit/core @octokit/plugin-paginate-rest
 
       - name: Fetch PRs and their reviews
         env:
@@ -28,19 +28,22 @@ jobs:
         with:
           script: |
             const { Octokit } = require("@octokit/core");
-
-            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+            const { paginateRest } = require("@octokit/plugin-paginate-rest");
+  
+            const MyOctokit = Octokit.plugin(paginateRest);
+            const octokit = new MyOctokit({ auth: process.env.GITHUB_TOKEN });
+  
             const owner = process.env.OWNER;
             const repo = process.env.REPO;
             const limit = 5;
   
-            async function fetchPullRequests() {
-              const { data } = await octokit.request('GET /repos/{owner}/{repo}/pulls', {
+            async function fetchAllPullRequests() {
+              return await octokit.paginate("GET /repos/{owner}/{repo}/pulls", {
                 owner,
                 repo,
+                state: "open",
                 per_page: 100
               });
-              return data;
             }
   
             async function fetchReviews(prNumber) {
@@ -72,14 +75,11 @@ jobs:
             }
   
             (async () => {
-              const pullRequests = await fetchPullRequests();
+              const pullRequests = await fetchAllPullRequests();
   
-              if (pullRequests.length === 0) {
-                console.log("No open pull requests found.");
-                return;
-              }
-
-              console.log(pullRequests.length);
+              console.log(`Found ${pullRequests.length} open pull requests.`);
+  
+              if (pullRequests.length === 0) return;
   
               const tasks = pullRequests.map(pr => () => fetchReviews(pr.number));
               const reviewsPerPR = await runWithConcurrencyLimit(tasks, limit);
