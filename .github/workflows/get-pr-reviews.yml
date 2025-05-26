@@ -78,6 +78,8 @@ jobs:
                 console.log("No open pull requests found.");
                 return;
               }
+
+              console.log(pullRequests.length);
   
               const tasks = pullRequests.map(pr => () => fetchReviews(pr.number));
               const reviewsPerPR = await runWithConcurrencyLimit(tasks, limit);
