@@ -1,0 +1,20 @@
+name: Test Env Variable in Run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-env:
+    runs-on: ubuntu-latest
+    env:
+      DIRECTORY: ./artifacts
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show directory value
+        run: echo "Directory is: $DIRECTORY"
+
+      - name: Dummy npm command with ddev
+        run: echo "Running: ddev npm --prefix \"$DIRECTORY\" run lint --if-present"
