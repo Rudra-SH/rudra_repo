@@ -14,7 +14,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Show directory value
-        run: echo "Directory is: $DIRECTORY"
+        run: |
+          echo "Directory is: $DIRECTORY"
 
       - name: Dummy npm command with ddev
-        run: echo "Running: ddev npm --prefix \"$DIRECTORY\" run lint --if-present"
+        run: |
+          echo "Running: ddev npm --prefix \"$DIRECTORY\" run lint --if-present"
