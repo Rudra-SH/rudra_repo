@@ -19,89 +19,132 @@ jobs:
       - name: Install Octokit
         run: npm install @octokit/core @octokit/plugin-paginate-rest
 
-      - name: Fetch PRs and their reviews
+      - name: Fetch CODEOWNERS
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OWNER: 'backstage'
-          REPO: 'backstage'
+          OWNER: 'Rudra-SH'
+          REPO: 'rudra_repo'
         uses: actions/github-script@v7
         with:
           script: |
             const { Octokit } = require("@octokit/core");
-            const { paginateRest } = require("@octokit/plugin-paginate-rest");
+
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+            const { owner, repo } = context.repo;
+      
+            // Common CODEOWNERS file locations
+            const codeownersPath = ".github/CODEOWNERS"
+
+            const response = await octokit.request(
+              "GET /repos/{owner}/{repo}/contents/{path}",
+                { owner, repo, path: codeownersPath }
+            );
+
+            const data = response.data;
+            const codeowners_base64_content = data.content.trim();
+            const codeowners_contents = Buffer.from(codeowners_base64_content.replace(/[^A-Za-zz0-9_=-]/g, ''), 'base64').toString('utf-8');
+            const lines = codeowners_contents.split('/n');
+            const patterns: string[] = [];
+            const teams: string[] = [];
+
+            lines.forEach(line => {
+              const cleanedLine = line.split('#')[0].trim();
+
+              if(!cleanedLine) return;
+
+              const parts = cleanedLine.split(/\s+/);
+              if(parts.length > 1){
+                patterns.push(parts[0]);
+                parts.slice(1).forEach(part => teams.push(part));
+              }
+            });
+
+            console.log(patterns);
+            console.log(teaams);
+
+      # - name: Fetch PRs and their reviews
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     OWNER: 'backstage'
+      #     REPO: 'backstage'
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const { Octokit } = require("@octokit/core");
+      #       const { paginateRest } = require("@octokit/plugin-paginate-rest");
   
-            const MyOctokit = Octokit.plugin(paginateRest);
-            const octokit = new MyOctokit({ auth: process.env.GITHUB_TOKEN });
+      #       const MyOctokit = Octokit.plugin(paginateRest);
+      #       const octokit = new MyOctokit({ auth: process.env.GITHUB_TOKEN });
   
-            const owner = process.env.OWNER;
-            const repo = process.env.REPO;
-            const limit = 5;
+      #       const owner = process.env.OWNER;
+      #       const repo = process.env.REPO;
+      #       const limit = 5;
   
-            async function fetchAllPullRequests() {
-              return await octokit.paginate("GET /repos/{owner}/{repo}/pulls", {
-                owner,
-                repo,
-                state: "open",
-                per_page: 100
-              });
-            }
+      #       async function fetchAllPullRequests() {
+      #         return await octokit.paginate("GET /repos/{owner}/{repo}/pulls", {
+      #           owner,
+      #           repo,
+      #           state: "open",
+      #           per_page: 100
+      #         });
+      #       }
   
-            async function fetchReviews(prNumber) {
-              const { data } = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
-                owner,
-                repo,
-                pull_number: prNumber
-              });
-              return data;
-            }
+      #       async function fetchReviews(prNumber) {
+      #         const { data } = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews', {
+      #           owner,
+      #           repo,
+      #           pull_number: prNumber
+      #         });
+      #         return data;
+      #       }
   
-            async function runWithConcurrencyLimit(tasks, limit) {
-              const results = [];
-              const executing = [];
+      #       async function runWithConcurrencyLimit(tasks, limit) {
+      #         const results = [];
+      #         const executing = [];
   
-              for (const task of tasks) {
-                const p = task();
-                results.push(p);
+      #         for (const task of tasks) {
+      #           const p = task();
+      #           results.push(p);
   
-                const e = p.then(() => {
-                  executing.splice(executing.indexOf(e), 1);
-                  console.log(`✅ Finished one. Running: ${executing.length}`);
-                });
-                executing.push(e);
-                console.log(`🚀 Started one. Running: ${executing.length}`);
+      #           const e = p.then(() => {
+      #             executing.splice(executing.indexOf(e), 1);
+      #             console.log(`✅ Finished one. Running: ${executing.length}`);
+      #           });
+      #           executing.push(e);
+      #           console.log(`🚀 Started one. Running: ${executing.length}`);
 
   
-                if (executing.length >= limit) {
-                  await Promise.race(executing);
-                  console.log(`⏳ Limit reached (${limit}). Waiting for one to finish...`);
-                }
-              }
+      #           if (executing.length >= limit) {
+      #             await Promise.race(executing);
+      #             console.log(`⏳ Limit reached (${limit}). Waiting for one to finish...`);
+      #           }
+      #         }
   
-              return Promise.all(results);
-            }
+      #         return Promise.all(results);
+      #       }
   
-            (async () => {
-              const pullRequests = await fetchAllPullRequests();
+      #       (async () => {
+      #         const pullRequests = await fetchAllPullRequests();
   
-              console.log(`Found ${pullRequests.length} open pull requests.`);
+      #         console.log(`Found ${pullRequests.length} open pull requests.`);
   
-              if (pullRequests.length === 0) return;
+      #         if (pullRequests.length === 0) return;
   
-              const tasks = pullRequests.map(pr => () => fetchReviews(pr.number));
-              const reviewsPerPR = await runWithConcurrencyLimit(tasks, limit);
+      #         const tasks = pullRequests.map(pr => () => fetchReviews(pr.number));
+      #         const reviewsPerPR = await runWithConcurrencyLimit(tasks, limit);
   
-              pullRequests.forEach((pr, i) => {
-                console.log(`\nPR #${pr.number} - ${pr.title}`);
-                const reviews = reviewsPerPR[i];
-                if (reviews.length === 0) {
-                  console.log("  No reviews");
-                } else {
-                  reviews.forEach(review => {
-                    console.log(`  ${review.user.login}: ${review.state}`);
-                  });
-                }
-              });
-            })().catch(err => {
-              console.error("Error:", err);
-              process.exit(1);
-            });
+      #         pullRequests.forEach((pr, i) => {
+      #           console.log(`\nPR #${pr.number} - ${pr.title}`);
+      #           const reviews = reviewsPerPR[i];
+      #           if (reviews.length === 0) {
+      #             console.log("  No reviews");
+      #           } else {
+      #             reviews.forEach(review => {
+      #               console.log(`  ${review.user.login}: ${review.state}`);
+      #             });
+      #           }
+      #         });
+      #       })().catch(err => {
+      #         console.error("Error:", err);
+      #         process.exit(1);
+      #       });
