@@ -42,8 +42,8 @@ jobs:
 
             const data = response.data;
             const codeowners_base64_content = data.content.trim();
-            const codeowners_contents = Buffer.from(codeowners_base64_content.replace(/[^A-Za-zz0-9_=-]/g, ''), 'base64').toString('utf-8');
-            const lines = codeowners_contents.split('/n');
+            const codeowners_contents = Buffer.from(codeowners_base64_content.replace(/[^A-Za-z0-9_=-]/g, ''), 'base64').toString('utf-8');
+            const lines = codeowners_contents.split('\n');
             const patterns = [];
             const teams = [];
 
