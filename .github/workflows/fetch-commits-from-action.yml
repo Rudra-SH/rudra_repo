@@ -1,0 +1,16 @@
+name: List Repository Commits
+
+on:
+  workflow_dispatch:
+
+jobs:
+  get-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Repository Commits
+        id: list-commits
+        uses: Rudra-SH/utilities-repository/list-commits@main
+      
+      - name: Display Commits
+        run: |
+          echo "Found commits: ${{ steps.list-commits.outputs.commits }}"
